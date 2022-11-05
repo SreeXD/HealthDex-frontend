@@ -2,9 +2,10 @@ import { useState } from 'react'
 import firebaseConfig from './config/firebase.config'
 import { initializeApp } from 'firebase/app'
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from 'firebase/auth'
-import { getFirestore, addDoc, collection } from "firebase/firestore";
+import { getFirestore } from "firebase/firestore";
 import FirebaseContext from './contexts/FirebaseContext'
 import UploadForm from "./components/UploadForm/UploadForm"
+import PatientDocuments from './components/PatientDocuments/PatientDocuments';
 import { Box } from "@mui/material"
 import { useEffect } from 'react';
 
@@ -33,7 +34,7 @@ export default function App() {
                         <div>{user?.email}</div>
 
                         <Box style={{ display: 'flex', width: '100vw', height: '100vh', justifyContent: 'center', alignItems: 'center' }}>
-                            <UploadForm />
+                            <PatientDocuments />
                         </Box>
                     </div>
 

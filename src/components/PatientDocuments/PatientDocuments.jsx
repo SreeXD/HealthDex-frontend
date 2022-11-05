@@ -1,25 +1,28 @@
-import "./UploadForm.css"
-import React, { useState, useContext } from "react";
-import FileUpload from 'react-material-file-upload'
+import React, { useState, useContext, useEffect } from "react";
 import { Box, Button, TextField, Typography, Autocomplete } from "@mui/material"
-import { getStorage, ref, uploadBytes } from "firebase/storage"
-import { addDoc, collection, getFirestore } from "firebase/firestore";
-import { v4 as uuidv4 } from 'uuid'
 import FirebaseContext from "../../contexts/FirebaseContext"
 import CircularProgress from '@mui/material/CircularProgress'
 import serverConfig from "../../config/server.config"
 
-export default function UploadForm({ props }) {
-    const storage = getStorage()
-    const firestore = getFirestore()
-    const [files, setFiles] = useState([])
+export default function PatientDocuments() {
     const [search, setSearch] = useState("")
     const [loading ,setLoading] = useState(false)
     const [options, setOptions] = useState([])
     const { user } = useContext(FirebaseContext)
     const [name, setName] = useState("")
+    const [fetching, setFetching] = useState(false)
     const [patient, setPatient] = useState(null)
-    const [uploading, setUploading] = useState(false)
+    const [patientFiles, setPatientFiles] = useState([])
+    const [_token, setToken] = useState(null)
+
+    useEffect(() => {
+        const x = async () => {
+            const token = await user.getIdToken()
+            setToken(token)
+        }
+
+        x()
+    }, [])
 
     const fetchEmails = async (value) => {
         setLoading(true)
@@ -52,31 +55,27 @@ export default function UploadForm({ props }) {
         setPatient(patientData)
     }
 
-    const submit = async () => {
-        setUploading(true)
+    const fetchDocs = async () => {
+        setFetching(true)
 
-        const file = files[0]
-        const storageRef = ref(storage, uuidv4())
+        const token = await user.getIdToken()
 
-        const snapshot = await uploadBytes(storageRef, file)
+        const patientFilesRes = await fetch(`${serverConfig.url}/patient/${patient.uid}/docs`, {
+            method: 'GET',
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        })
+        .then(body => body.json())
 
-        const name = snapshot.metadata.name
-        const type = snapshot.metadata.contentType 
-        const patientId = patient.uid
+        setPatientFiles(patientFilesRes)
 
-        await addDoc(collection(firestore, 'patientFiles'), {
-            patient: patientId,
-            patientName: patient.displayName,
-            fileName: name,
-            fileType: type
-        }) 
-
-        setUploading(false)
+        setFetching(false)
     }
-    
+
     return (
         <Box style={{ maxWidth: '90%', width: '600px', padding: '40px 20px', borderRadius: '5px', boxShadow: '0px 0px 3px 0px #aaa' }}>
-            <Typography align='center' sx={{ marginBottom: '40px', fontSize: '32px' }}>Upload Patient Record</Typography>
+            <Typography align='center' sx={{ marginBottom: '40px', fontSize: '32px' }}>Get Patient Records</Typography>
 
             <Box style={{ display: 'flex', marginBottom: '20px' }}>
                 <Autocomplete 
@@ -118,16 +117,27 @@ export default function UploadForm({ props }) {
             </Box>
 
             <TextField disabled value={name} style={{ width: '100%', marginBottom: '20px' }} variant="outlined" label="Name" placeholder="Search by Email" />
-            
-            <FileUpload value={files} onChange={setFiles} />
-
-            <Button onClick={submit} variant="contained" style={{ marginTop: '20px', padding: '10px 30px' }}>
-                {uploading ? "Submitting.." : "Submit"} 
+       
+            <Button onClick={fetchDocs} variant="contained" style={{ marginTop: '10px', padding: '10px 30px' }}>
+                {fetching ? "Fetching.." : "Fetch"} 
                
-                { uploading &&
+                { fetching &&
                     <CircularProgress sx={{ marginLeft: '8px' }} color="inherit" size={20} />
                 }
             </Button>
+
+            <div>
+                { _token && patientFiles.map(x => {
+                    const filename = x.fileName
+                    const url = `https://firebasestorage.googleapis.com/v0/b/hash-39f73.appspot.com/o/${filename}?alt=media&token=${_token}`
+                
+                    return (
+                        <div key={filename}>
+                            <a href={url}>{filename}</a>
+                        </div>
+                    )
+                })}
+            </div>
         </Box>
     )
-} 
+}
