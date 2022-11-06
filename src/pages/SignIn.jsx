@@ -1,21 +1,26 @@
 import { Box, Button, Switch, Typography } from "@mui/material"
 import { getAuth, signInWithPopup, GoogleAuthProvider } from 'firebase/auth'
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState, useRef } from 'react'
 import FirebaseContext from "../contexts/FirebaseContext"
 import { useNavigate } from "react-router"
 import serverConfig from "../config/server.config"
 
 export default function SignIn() {
     const [isDoctor, setIsDoctor] = useState(false)
+    const isDoctorRef = useRef(isDoctor)
     const { user } = useContext(FirebaseContext)
     const navigate = useNavigate()
+
+    useEffect(() => {
+        isDoctorRef.current = isDoctor
+    }, [isDoctor])
 
     useEffect(() => {
         if (user) {
             getAuth().currentUser.getIdTokenResult()
                 .then(res => {
                     if (res) {                    
-                        if (res.claims.doctor) {
+                        if (res.claims.doctor || isDoctorRef.current) {
                             navigate('/doctor/getDocs')
                         }
         
