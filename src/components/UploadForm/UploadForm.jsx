@@ -20,6 +20,7 @@ export default function UploadForm({ props }) {
     const [name, setName] = useState("")
     const [patient, setPatient] = useState(null)
     const [uploading, setUploading] = useState(false)
+    const [uploadedMessage, setUploadedMessage] = useState("")
 
     const fetchEmails = async (value) => {
         setLoading(true)
@@ -54,6 +55,7 @@ export default function UploadForm({ props }) {
 
     const submit = async () => {
         setUploading(true)
+        setUploadedMessage("uploading...")
 
         const file = files[0]
         const storageRef = ref(storage, uuidv4())
@@ -72,6 +74,7 @@ export default function UploadForm({ props }) {
         }) 
 
         setUploading(false)
+        setUploadedMessage("uploaded")
     }
     
     return (
@@ -121,13 +124,17 @@ export default function UploadForm({ props }) {
             
             <FileUpload value={files} onChange={setFiles} accept='.pdf' />
 
-            <Button onClick={submit} variant="contained" style={{ marginTop: '20px', padding: '10px 30px' }}>
-                {uploading ? "Submitting.." : "Submit"} 
-               
-                { uploading &&
-                    <CircularProgress sx={{ marginLeft: '8px' }} color="inherit" size={20} />
-                }
-            </Button>
+            <Box style={{ display: 'flex', alignItems: 'center' }}>
+                <Button onClick={submit} variant="contained" style={{ marginTop: '20px', padding: '10px 30px' }}>
+                    {uploading ? "Submitting.." : "Submit"} 
+                
+                    { uploading &&
+                        <CircularProgress sx={{ marginLeft: '8px' }} color="inherit" size={20} />
+                    }
+                </Button>
+
+                <Typography style={{ marginLeft: 'auto' }} color="primary">{uploadedMessage}</Typography>
+            </Box>
         </Box>
     )
 } 

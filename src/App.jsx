@@ -4,14 +4,12 @@ import { initializeApp } from 'firebase/app'
 import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth'
 import { getFirestore } from "firebase/firestore";
 import FirebaseContext from './contexts/FirebaseContext'
-import UploadForm from "./components/UploadForm/UploadForm"
-import PatientDocuments from './components/PatientDocuments/PatientDocuments';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import SignIn from './pages/SignIn'
 import GetDocs from './pages/Doctor/GetDocs';
 import UploadDoc from './pages/Doctor/UploadDoc';
 import PatientHome from "./pages/Patient/Home"
-import { Box, AppBar, Typography, Avatar, Button } from "@mui/material"
+import { Box, AppBar, Typography, Avatar, Button, CircularProgress } from "@mui/material"
 import { Link } from "react-router-dom"
 
 export default function App() {
@@ -20,27 +18,32 @@ export default function App() {
     const db = getFirestore(app);
     const [user, setUser] = useState(null)
     const [isDoctor, setIsDoctor] = useState(false)
+    const [ userLoading, setUserLoading ] = useState(true)
 
     onAuthStateChanged(auth, (user) => {
         setUser(user)
+        setUserLoading(false)
 
-        getAuth().currentUser.getIdTokenResult()
-            .then(res => {
-                if (res) {                    
-                    if (res.claims.doctor) {
-                        setIsDoctor(true)  
+        if (user) {
+            getAuth().currentUser.getIdTokenResult()
+                .then(res => {
+                    if (res) {                    
+                        if (res.claims.doctor) {
+                            setIsDoctor(true)  
+                        }
+        
+                        else {
+                            setIsDoctor(false)
+                        }
                     }
-    
-                    else {
-                        setIsDoctor(false)
-                    }
-                }
-            })
+                })
+        }
     })
 
     return (
         <BrowserRouter>
-            <FirebaseContext.Provider value={{ user }}>
+            {!userLoading 
+            ? <FirebaseContext.Provider value={{ user }}>
                 <AppBar sx={{ padding: '15px 20px', margin: '0', display: 'flex', flexDirection: 'row', alignItems: 'center' }} position='static'>
                     <Typography variant="h5">HealthXD</Typography>
 
@@ -82,9 +85,13 @@ export default function App() {
                     <Route path='/patient/home' element={<PatientHome />} />
                     <Route path='/doctor/getDocs' element={<GetDocs />} />
                     <Route path='/doctor/uploadDoc' element={<UploadDoc />} />
-                    <Route path='/signin' element={<SignIn />} />
+                    <Route path='/' element={<SignIn />} />
                 </Routes>
             </FirebaseContext.Provider>
+
+            : <Box style={{ width: '100vw', height: '100vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <CircularProgress size={30} color="inherit"></CircularProgress>
+            </Box>}
         </BrowserRouter>
     )
 }

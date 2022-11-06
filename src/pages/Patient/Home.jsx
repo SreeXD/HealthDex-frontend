@@ -5,6 +5,7 @@ import FirebaseContext from "../../contexts/FirebaseContext"
 import { Box } from "@mui/material"
 import { useState } from "react"
 import { Document, Page, pdfjs } from 'react-pdf'
+import { useNavigate } from "react-router-dom"
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -13,6 +14,11 @@ export default function GetDocs() {
     const [files, setFiles] = useState([])
     const { user } = useContext(FirebaseContext)
     const [_token, setToken] = useState(null)
+    const navigate = useNavigate()
+
+    if (!user) {
+        navigate('/')
+    }
 
     useEffect(() => {
         const x = async () => {
