@@ -9,6 +9,12 @@ We, the team Specter have come up with an idea addressing these questions. We ar
 Our product allows patient to see their medical records from the hospitals they visited. It also allows doctors to view the medical history of patients so that they can perform a quick diagnosis
 
 Libraries Used<br />
-[React](https://github.com/reactjs/reactjs.org)<br />
+[React](https://reactjs.org)<br />
 [Material UI](https://mui.com)<br />
-[Firebase](https://firebase.google.com)
+[Firebase](https://firebase.google.com)<br />
+
+To run our project execute the frontend and backend simultaneously using the commands<br />
+npm ci<br />
+npm run dev<br />
+in two terminals for frontend and backend respectively.
+
