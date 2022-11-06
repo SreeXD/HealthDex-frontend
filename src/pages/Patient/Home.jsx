@@ -6,6 +6,7 @@ import { Box } from "@mui/material"
 import { useState } from "react"
 import { Document, Page, pdfjs } from 'react-pdf'
 import { useNavigate } from "react-router-dom"
+import { Typography } from "@mui/material"
 
 pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
 
@@ -57,9 +58,13 @@ export default function GetDocs() {
 
     return (
         <Box>
+            {!fetching && files.length == 0 && 
+                <Typography variant='h4'>No Records Found</Typography>
+            }
             { _token && files.map(x => {
                 const filename = x.fileName
                 const url = x.url
+                
             
                 return (
                     <a href={url} key={url}>

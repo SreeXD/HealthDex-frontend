@@ -11,6 +11,7 @@ import UploadDoc from './pages/Doctor/UploadDoc';
 import PatientHome from "./pages/Patient/Home"
 import { Box, AppBar, Typography, Avatar, Button, CircularProgress } from "@mui/material"
 import { Link } from "react-router-dom"
+import "./App.css"
 
 export default function App() {
     const app = initializeApp(firebaseConfig)
@@ -45,7 +46,7 @@ export default function App() {
             {!userLoading 
             ? <FirebaseContext.Provider value={{ user }}>
                 <AppBar sx={{ padding: '15px 20px', margin: '0', display: 'flex', flexDirection: 'row', alignItems: 'center' }} position='static'>
-                    <Typography variant="h5">HealthXD</Typography>
+                    <Typography variant="h5">HealthDex</Typography>
 
                     { user &&
                         <Box sx={{ marginLeft: '20px', display: 'flex' }}>
