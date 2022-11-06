@@ -76,7 +76,7 @@ export default function UploadForm({ props }) {
     
     return (
         <Box style={{ maxWidth: '90%', width: '600px', padding: '40px 20px', borderRadius: '5px', boxShadow: '0px 0px 3px 0px #aaa' }}>
-            <Typography align='center' sx={{ marginBottom: '40px', fontSize: '32px' }}>Upload Patient Record</Typography>
+            <Typography align='center' sx={{ marginBottom: '40px', fontSize: '28px' }}>Upload Patient Record</Typography>
 
             <Box style={{ display: 'flex', marginBottom: '20px' }}>
                 <Autocomplete 
@@ -119,7 +119,7 @@ export default function UploadForm({ props }) {
 
             <TextField disabled value={name} style={{ width: '100%', marginBottom: '20px' }} variant="outlined" label="Name" placeholder="Search by Email" />
             
-            <FileUpload value={files} onChange={setFiles} />
+            <FileUpload value={files} onChange={setFiles} accept='.pdf' />
 
             <Button onClick={submit} variant="contained" style={{ marginTop: '20px', padding: '10px 30px' }}>
                 {uploading ? "Submitting.." : "Submit"} 
