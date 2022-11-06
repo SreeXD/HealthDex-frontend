@@ -7,7 +7,7 @@ We, the team Specter have come up with an idea addressing these questions. We ar
 
 Our product allows patient to see their medical records from the hospitals they visited. It also allows doctors to view the medical history of patients so that they can perform a quick diagnosis
 
-Libraries Used
-[React](https://github.com/reactjs/reactjs.org)
-[Material UI](https://mui.com)
+Libraries Used<br />
+[React](https://github.com/reactjs/reactjs.org)<br />
+[Material UI](https://mui.com)<br />
 [Firebase](https://firebase.google.com)
